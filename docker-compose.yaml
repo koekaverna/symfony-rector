@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  php:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/var/www/html
