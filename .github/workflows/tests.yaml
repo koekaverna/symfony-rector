@@ -26,12 +26,7 @@ jobs:
         strategy:
             matrix:
                 operating-system: ['ubuntu-latest']
-                php-version: ['8.0', '8.1']
-                include:
-                    - operating-system: 'macos-latest'
-                      php-version: '8.0'
-                    - operating-system: 'windows-latest'
-                      php-version: '8.0'
+                php-version: ['8.1']
 
         steps:
             - name: "Checkout code"
@@ -59,16 +54,8 @@ jobs:
                   key: ${{ runner.os }}-${{ matrix.php-version }}-composer-${{ hashFiles('composer.json') }}
                   restore-keys: ${{ runner.os }}-${{ matrix.php-version }}-composer-
 
-            - name: "Require symfony/flex"
-              run: composer global require --no-progress --no-scripts --no-plugins symfony/flex
+            - run: composer install
 
-            - run: composer update
+            - name: "Run Rector"
+              run: vendor/bin/rector process --debug --dry-run
 
-            - name: "Install PHPUnit"
-              run: vendor/bin/simple-phpunit install
-
-            - name: "PHPUnit version"
-              run: vendor/bin/simple-phpunit --version
-
-            - name: "Run tests"
-              run: vendor/bin/simple-phpunit ${{ env.PHPUNIT_FLAGS }}
